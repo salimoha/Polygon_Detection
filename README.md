@@ -1,2 +1,1 @@
-# DeepLearningWithPython
 # PolygonDetection

@@ -1,0 +1,32 @@
+October 3 - 10
+- Use Sobel edge detector instead of canny to make edges stand out
+- Apply canny to sobel-ized image
+
+Weak gradient elimination
+
+- Three approaches:
+	1) Hough line/Shi Tomasi corner clustering
+	2) Shi tomasi of different color spaces corner clustering
+	
+	3) SVD/PCA, Go with PCA
+
+	All on synthetic images, compile images in new directory
+
+	Report on results
+
+	https://people.stanford.edu/damicos/sites/default/files/aasgnc2017_sharmadamico.pdf
+
+October 10 - October 17
+- Solve shadow problem in synthetic imagews
+- Colors, we are not using such information, think about using them somehow
+
+17 - 24
+- Pose estimation/matching using cross foundation
+
+24 - 31
+
+
+
+1st nov - nov 7
+
+nov - 

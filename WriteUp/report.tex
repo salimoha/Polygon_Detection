@@ -1,4 +1,4 @@
-\title{Final Summary of Pose Estimation Project}
+\title{Second Update on Polygon Detection Algorithm}
 \author{
         Andrew Ho \\
         Aerospace Robotics and Control Laboratory \\
@@ -6,6 +6,9 @@
 }
 
 \documentclass[12pt]{article}
+\usepackage{graphicx}
+\usepackage{float}
+\graphicspath{ {./images/} }
 
 \begin{document}
 \maketitle
@@ -13,103 +16,143 @@
 \section{Introduction}
 
 \noindent The goal of the image processing stage is to extract line segments which correspond
-to true edges or at least to edges available in the spacecraft model.
-For our project, we aim to use the following approach to detect line segments
-within an image, in order to detect larger polygons:
+to true edges or at least to edges available in the spacecraft model. In combination with Polygon tracking, the project aims to find a robust method of mapping polygons.
+
+\section{Pipeline}
+
+We use the following pipeline to detect line segments within an image, in order to detect larger polygons:
 
 \begin{enumerate}
 \item Low Pass Filtering
+\item Thresholding
 \item Edge Detection
-\item Edge Smoothing
-\item Straight Edge filtering
-\item Polygon Extraction
+\item Corner Detection
+\item Convex Hull 
+\item Further Corner Filtering
+\item Polygon Tracking
 \end{enumerate}
 
-\noindent Low Pass Filtering reduces contrast within image, effectively blurring out less important edges. This allows for higher accuracy when we apply edge detection algorithms. \newline
+\noindent Low Pass Filtering: This step reduces contrast within image, effectively blurring out less important edges. This allows for higher accuracy when we apply edge detection algorithms. \newline
 
-\noindent Edge Detection is the first stage in which preliminary edge detection occurs. The best method would be to use Canny Edge Detection. \newline
+\noindent Thresholding:  This step strips the image down to strong features, removing external noise in an image. \newline
 
-\noindent Edge Smoothing algorithms such as Contour Approximation are applied, which aim to eliminate insignificant edges produced by the Edge Detection step and extract vertices of significant edges. \newline
+\noindent Edge Detection: This step implements two different edge detection algorithms. First, Probabilistic Hough Line Transform is applied, extracting an array of important segments. Then the Line Segment Detector algorithm outlined in:\newline
+ 
+ \indent Rafael Grompone von Gioi, Jérémie Jakubowicz, Jean-Michel Morel, and Gregory Randall. Lsd: a line segment detector. 2012. \newline
+ 
+\noindent is used to thin out the edges detected from Hough Line Transform. \newline
 
-\noindent Straight Edge filtering takes the smoothed edges from Edge Smoothing and finds straight edges by splitting up detected edges into separate lines. Overlapping straight edges are filtered out.
+\noindent Corner Detection: This step implements the Shi-Tomasi method of detecting corners. We apply this algorithm to the stripped image from Edge Detection. We set the max number of corners to 8, casting a wide net in case the true corners to detect are not the strongest corners in the image. \newline
 
-\noindent Polygon extraction takes the filtered straight edges and builds polygons using conditions of collinearity, parallelism, and adjacency, as discussed in the Simone D?Amico.
+\noindent Convex Hull: This step takes the corners detected in the Corner Detection step and finds the convex hull of outer most points, guaranteeing that we preserve true corners. \newline
 
-\section{The issues with Hough Line Transform and other Straight Line Detection Algorithms}
+\noindent Further Corner Filtering: This step takes the points of the Convex Hull and removes collinear points, leaving only true corners. From these true corners we draw edges to outline the polygon. \newline
 
-Hough Line Transform and other popular straight line detection algorithms is fantastic for images with many straight edges, and for detecting a majority of edges in an image. However, it values guaranteeing straight edges over checking all potential straight edges. As a result, Hough Line Transform is not ideal for detecting objects.
+\section{Example Process}
 
-\section{Proposed New Line Detection Algorithm}
+\noindent Consider the following image:\newline
 
-We propose a new algorithm that guarantees all significant straight edges in an image are detected. This algorithm utilizes several libraries from OpenCV, which will be referenced below.
+\begin{figure}[H]
+\caption{Original Source Image}
+\centering
+\includegraphics{source}
+\end{figure}
 
-\begin{enumerate}
+\noindent To the human eye, the white rectangle is quite evident. However, there are certain issues for a computer. The bottom length of the rectangle is missing and the antennae of the satellites may prove to turn up as false corners.
 
-\item We start by loading the source image into a Mat object, which is standard practice with OpenCV.
+\noindent We would like to receive a polygon from the image, as shown in the following image: \newline
 
-\item We then apply a Gaussian filter to blur pixels. This first pass removes soft noise and prepares the image for thresholding. Gaussian filter has produced the best results with this algorithm.??\item Next, apply a thresholding function on blurred image, which increases contrast between pixels, strengthening detected edges. Note that if a gaussian filter had not been applied, noise could have been amplified, which would throw off the Canny Edge Detection in the next step.??
-\item Apply Canny Edge detection (taken from OpenCV) on thresholded image to outline object. This retrieves all pixels in an image that lie on an edge.??
-\item Apply approximate contour detection (taken from OpenCV) to get edges from canny map. This gives us the actual set of points that are on the Canny Edge detection in a coordinate system. Often times, due to the nature of Bresenham's line algorithm, implemented by approximate contour detection, significant points come in pairs. This works nicely with the next section.??
-\item From all contours, filter out edges with less than 20 points. All contours with less than 20 points are 99\% likely to be fringe edges that we do not want??
-\item From remaining contours, detect all straight edges (straights). The algorithm uses the Pearson Correlation Coefficient to detect the probability a set of points forms a line.
+\begin{figure}[H]
+\caption{Desired Output}
+\centering
+\includegraphics{desired_result}
+\end{figure}
 
-The process is as follows:
+\noindent First, we apply thresholding: \newline
 
-	We first create a new C++ vector called "straight\_contours". This holds all of our detected straight contours.
+\begin{figure}[H]
+\caption{Thresholding}
+\centering
+\includegraphics{threshold}
+\end{figure}
+
+\noindent Second, we apply Probabilistic Hough Line Transform: \newline
+
+\begin{figure}[H]
+\caption{Probabilistic Hough Line Transform}
+\centering
+\includegraphics{hough}
+\end{figure} 
+
+\noindent To this image, we apply the Line Segment Detector algorithm from Grompone, Jakubowicz, Morel, and Randall: \newline
+
+\begin{figure}[H]
+\caption{Line Segment Detector}
+\centering
+\includegraphics{LSD}
+\end{figure}
+
+\noindent Next, we use the Shi-Tomasi algorithm to detect important corners: \newline
+
+\begin{figure}[H]
+\caption{Shi-Tomasi Corner Detection}
+\centering
+\includegraphics{corner_detection}
+\end{figure}
+
+\noindent Notice we have over-detected corners. This is to ensure we capture true corners. Next, we find the convex hull: \newline
+
+\begin{figure}[H]
+\caption{Convex Hull}
+\centering
+\includegraphics{convex_hull}
+\end{figure}
+
+\noindent From the convex hull, we remove collinear lines, leaving us with a simple polygon: \newline
+
+\begin{figure}[H]
+\caption{Filtered Convex Hull}
+\centering
+\includegraphics{progression_final}
+\end{figure}
+
+\noindent Compared to our target polygon, the algorithm does a tremendous job of finding the correct polygon: \newline
+
+\includegraphics{desired_result}    \includegraphics{progression_final} \newline
+
+\noindent Below are additional examples compared side by side: \newline
+
+\noindent Example 1 \newline 
+
+\includegraphics{source2}    \includegraphics{result2} \newline
+
+
+
+\noindent Example 2 \newline
+
+\includegraphics{source3}    \includegraphics{result3} \newline
+
+
+\section {Next Steps and Challenges}
+	There are certain cases in which the antennae provides too strong of a corner. Consider the following image:
 	
-	We then iterate through each contour from the contour map. 
-	
-	Testing 6 points at a time, we calculate the Pearson Correlation Coefficient (r value) through these 6 points. The higher the r value of a set of points, the more likely they are to be on the same line. If the r value does not pass a certain threshold (we take the threshold to be 0.85), then we remove the first two points and add the next two points from the contour map. 
-	
-	However, if the r value through these 6 points is higher than the threshold, then we add the next two points from the contour map. If the r value increases, then we know we have detected a straight edge.
-	
-	
-	We continue to add two points at a time, in order to take pairs of significant points as described in the previous section. in addition, this speeds up the process of checking every point. As long as the r value continues to increase, we know that the points added are supposed to be on the line. 
-	
-	Once we add points that decrease the r value of the set of points, we check whether we remove both or only one of the points. We then take the first point added and the last point added to mark the straight contour, and add it to straight\_contours.
-	
-	Iterating through all contours in the contour map returns all straight edges in the image.
+\begin{figure}[H]
+\caption{Failure Example}
+\centering
+\includegraphics{failure_case}
+\end{figure}
 
-\item The method outlined in 7) is especially vulnerable to thick edges, since it will detect the same edge twice: once for the outer edge and once for the inner edge. As such, we need to filter out edges that appear to be from the same edge. 
+From the Harris Corner Detection step output, it's clear to see that there is an extra corner detected that skews the results
 
-We sort the resulting straight edges by their slope, from negative to positive. If the slopes are similar, then we check the distances from end points. If the distances between end points are small enough, then we know that these lines are overlapping. We then eliminate the shorter edge. 
-
-After filtering, we have only edges that we want.
-\item We can now apply conditions outlined by Simone D'Amico
-
-	First, we test for lines that should be collinear. If two lines are meant to be unified as a single line, then we take the two furthest endpoints as the endpoints of the new line. 
+\begin{figure}[H]
+\caption{Harris Corner Detection Failure}
+\centering
+\includegraphics{harris_failure}
+\end{figure}
 	
-	After connecting all line segments that should be connected, we need to test to see if any resulting line segments are overlapping. The reason we check twice is because if we were to connect collinear edges before initially checking for overlapping edges, there would be a much higher chance of accidentally connecting lines that were not meant to be added together.
-	
-	Next, we check for pairs of parallel lines. If we find significant pairs of parallel lines, then we know we have identified parts of a significant polygon. These pairs are stored for later. 
-	
-	Finally, we check if any non-collinear line segments should be connected.
-	
-	The result of this step gives us all significant connected edges. 
-
-\item We can now search within the detected lines whether a polygon exists.
-	
-	If two pairs of parallel lines were connected then a rectangle has been detected guaranteed.
-    
-    	If two pairs of parallel lines are connected and connected by a line, then draw the other line with the unconnected endpoints of the parallel lines
-    	
-	If no pairs of parallel lines were detected, then if any two lines were connected, draw parallelogram.
-	
-        If no lines were connected, then no polygons have been detected. This end case is one that should not result.
-
-	
-
-\end{enumerate}
-
-\section {Current issues and Next Steps}
-
-Currently, the code is unable to properly implement the Stanford conditions. The program currently outputs significant straight edges found in the original image using the new line detection algorithm. Further steps need to be taken to rectify the incorrect implementation of collinear, parallel, and adjacency detection.
-	
-	A proposed solution is to implement a directed graph data structure, saving each corner as a node. This would allow us to test whether pairs of parallel lines are in fact connected by a single edge. If not, then we know that an edge that does not currently exist must be drawn. 
-
-	The complete polygon detection algorithm must be completed. However, after edge cases are dealt with, we then look to implement tracking algorithms. After performing object detection on the first frame, we can then track the detected objects in faster time that relying solely on polygon detection for every frame. However, to continually check that new structures are not detected within each frame, we will continue to apply object detection to every frame.
+	To amend this issue, we can instead implement a Traveling Salesman algorithm to find include every point in the outer layer, and detect whether or not corners detected are legitimate by comparing whether pixels between the points are black or white. If there are not enough pixels between two corners that are white, then that corner must not exist.
 
 \bibliographystyle{abbrv}
-\bibliography{main}
+\bibliography{main} 
 
 \end{document}

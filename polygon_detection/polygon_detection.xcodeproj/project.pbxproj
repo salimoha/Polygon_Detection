@@ -67,8 +67,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		F8C8428C20E0439400CED919 /* line_detection.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = line_detection.cpp; path = polygon_detection/line_detection.cpp; sourceTree = "<group>"; };
-		F8C8428D20E0439400CED919 /* line_detection.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = line_detection.hpp; path = polygon_detection/line_detection.hpp; sourceTree = "<group>"; };
+		F8C8428C20E0439400CED919 /* line_detection.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = line_detection.cpp; sourceTree = "<group>"; };
+		F8C8428D20E0439400CED919 /* line_detection.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = line_detection.hpp; sourceTree = "<group>"; };
 		F8FC7C3220A5B01E001E5F4D /* polygon_detection */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = polygon_detection; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8FC7C3520A5B01E001E5F4D /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		F8FC7C3D20A5B1F1001E5F4D /* libopencv_structured_light.3.4.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_structured_light.3.4.1.dylib; path = ../../../../../usr/local/Cellar/opencv/3.4.1_5/lib/libopencv_structured_light.3.4.1.dylib; sourceTree = "<group>"; };
@@ -173,8 +173,6 @@
 		F8FC7C2920A5B01D001E5F4D = {
 			isa = PBXGroup;
 			children = (
-				F8C8428C20E0439400CED919 /* line_detection.cpp */,
-				F8C8428D20E0439400CED919 /* line_detection.hpp */,
 				F8FC7C3E20A5B1F2001E5F4D /* libopencv_aruco.3.4.1.dylib */,
 				F8FC7C4220A5B1F2001E5F4D /* libopencv_bgsegm.3.4.1.dylib */,
 				F8FC7C4120A5B1F2001E5F4D /* libopencv_bioinspired.3.4.1.dylib */,
@@ -234,6 +232,8 @@
 		F8FC7C3420A5B01E001E5F4D /* polygon_detection */ = {
 			isa = PBXGroup;
 			children = (
+				F8C8428C20E0439400CED919 /* line_detection.cpp */,
+				F8C8428D20E0439400CED919 /* line_detection.hpp */,
 				F8FC7C3520A5B01E001E5F4D /* main.cpp */,
 			);
 			path = polygon_detection;

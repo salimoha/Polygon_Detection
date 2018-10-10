@@ -1,6 +1,9 @@
 dependencies: \
-  /Users/andrewho/Desktop/ARCL/polygon_detection/polygon_detection/main.cpp \
-  /usr/local/include/opencv2/imgcodecs.hpp \
+  /Users/andrewho/repos/Polygon_Detection/polygon_detection/polygon_detection/main.cpp \
+  /Users/andrewho/repos/Polygon_Detection/polygon_detection/polygon_detection/line_detection.hpp \
+  /usr/local/include/opencv2/line_descriptor.hpp \
+  /usr/local/include/opencv2/line_descriptor/descriptor.hpp \
+  /usr/local/include/opencv2/core/utility.hpp \
   /usr/local/include/opencv2/core.hpp \
   /usr/local/include/opencv2/core/cvdef.h \
   /usr/local/include/opencv2/core/hal/interface.h \
@@ -23,20 +26,19 @@ dependencies: \
   /usr/local/include/opencv2/core/persistence.hpp \
   /usr/local/include/opencv2/core/operations.hpp \
   /usr/local/include/opencv2/core/cvstd.inl.hpp \
-  /usr/local/include/opencv2/core/utility.hpp \
-  /usr/local/include/opencv2/core/core_c.h \
-  /usr/local/include/opencv2/core/types_c.h \
   /usr/local/include/opencv2/core/optim.hpp \
   /usr/local/include/opencv2/core/ovx.hpp \
+  /usr/local/include/opencv2/core/core_c.h \
+  /usr/local/include/opencv2/core/types_c.h \
+  /usr/local/include/opencv2/imgproc.hpp \
+  /usr/local/include/opencv2/imgproc/imgproc_c.h \
+  /usr/local/include/opencv2/imgproc/types_c.h \
+  /usr/local/include/opencv2/imgcodecs.hpp \
   /usr/local/include/opencv2/highgui/highgui.hpp \
   /usr/local/include/opencv2/highgui.hpp \
   /usr/local/include/opencv2/videoio.hpp \
   /usr/local/include/opencv2/highgui/highgui_c.h \
-  /usr/local/include/opencv2/imgproc/imgproc_c.h \
-  /usr/local/include/opencv2/imgproc/types_c.h \
   /usr/local/include/opencv2/imgcodecs/imgcodecs_c.h \
   /usr/local/include/opencv2/videoio/videoio_c.h \
   /usr/local/include/opencv2/imgproc/imgproc.hpp \
-  /usr/local/include/opencv2/imgproc.hpp \
-  /Users/andrewho/Desktop/ARCL/polygon_detection/polygon_detection/line_detection.cpp \
-  /Users/andrewho/Desktop/ARCL/polygon_detection/polygon_detection/line_detection.hpp
+  /usr/local/include/opencv2/core/core.hpp
